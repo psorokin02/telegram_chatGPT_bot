@@ -30,7 +30,7 @@ public class TelegramUpdateMessageHandler {
             telegramAsyncMessageSender.sendMessageAsync(
                     chatId,
                     () -> handleMessageAsync(message),
-                    this::getErrorMessage
+                    (throwable) -> getErrorMessage(throwable, chatId)
             );
         }
         return null;
@@ -44,9 +44,10 @@ public class TelegramUpdateMessageHandler {
         }
     }
 
-    private SendMessage getErrorMessage(Throwable throwable) {
-        log.error("Произошла ошибка", throwable);
+    private SendMessage getErrorMessage(Throwable throwable, String chatId) {
+        log.error("Произошла ошибка, chatId={}", chatId, throwable);
         return SendMessage.builder()
+                .chatId(chatId)
                 .text("Произошла ошибка, попробуйте позже")
                 .build();
     }

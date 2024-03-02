@@ -1,6 +1,5 @@
 package school.sorokin.event.manager.telegrambot.telegram;
 
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -33,6 +32,7 @@ public class TelegramAsyncMessageSender {
             Supplier<SendMessage> action,
             Function<Throwable, SendMessage> onErrorHandler
     ) {
+        log.info("Send message async: chatId={}", chatId);
         var message = defaultAbsSender.execute(SendMessage.builder()
                         .text("Ваш запрос принят в обработку, ожидайте")
                         .chatId(chatId)
@@ -42,6 +42,7 @@ public class TelegramAsyncMessageSender {
                 .exceptionally(onErrorHandler)
                 .thenAccept(sendMessage -> {
                     try {
+                        log.info("Send edit message async: chatId={}", chatId);
                         defaultAbsSender.execute(EditMessageText.builder()
                                         .chatId(chatId)
                                         .messageId(message.getMessageId())
