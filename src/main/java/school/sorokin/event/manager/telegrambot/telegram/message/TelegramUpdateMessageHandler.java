@@ -20,6 +20,7 @@ public class TelegramUpdateMessageHandler {
     private final TelegramVoiceHandler telegramVoiceHandler;
 
     public BotApiMethod<?> handleMessage(Message message) {
+        log.info("Start message processing: message={}", message);
         if (telegramCommandsDispatcher.isCommand(message)) {
             return telegramCommandsDispatcher.processCommand(message);
         }
