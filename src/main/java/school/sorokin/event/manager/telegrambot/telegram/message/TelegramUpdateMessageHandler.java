@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import school.sorokin.event.manager.telegrambot.command.TelegramCommandsDispatcher;
@@ -37,11 +38,12 @@ public class TelegramUpdateMessageHandler {
     }
 
     private SendMessage handleMessageAsync(Message message) {
-        if (message.hasVoice()) {
-            return telegramVoiceHandler.processVoice(message);
-        } else {
-            return telegramTextHandler.processTextMessage(message);
-        }
+        SendMessage result = message.hasVoice()
+                ? telegramVoiceHandler.processVoice(message)
+                : telegramTextHandler.processTextMessage(message);
+
+        result.setParseMode(ParseMode.MARKDOWNV2);
+        return result;
     }
 
     private SendMessage getErrorMessage(Throwable throwable, String chatId) {
